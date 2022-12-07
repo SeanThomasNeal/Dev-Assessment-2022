@@ -205,6 +205,7 @@ def RaiseViewMeetingFrame(meeting):
 ###Update MIS Frame###
 def RaiseUpdateMISFrame(meeting_id):
     ClearFrame()
+    Meeting = DatabaseManager.FetchMeeting(meeting_id)
     MeetingItemList = DatabaseManager.FetchMeetingItems(meeting_id)
     Label(RootFrame, text = "Choose Item:").grid(row=0, column=0, sticky=N)
     ItemSelectMenu = StringVar()
