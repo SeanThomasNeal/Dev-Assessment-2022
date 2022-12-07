@@ -91,5 +91,4 @@ def InitializeDatabase():
     CreatePtlMeetings()
     CreateItems()
     GenerateInitialMIS()
-    print("success")
 #Resets Database to initial data
