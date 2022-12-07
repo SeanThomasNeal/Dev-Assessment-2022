@@ -123,7 +123,7 @@ def UpdateMISButton(meeting_id, item_id, action, status, DDate, CDate, Person, o
         output.insert(END, "yyyy-mm-dd")
     else:
         DatabaseManager.UpdateMISData(meeting_id, item_id, action, status, ValidDD, ValidCD, Person)
-        OutputString = "Updated Item: " + item_id
+        OutputString = "Updated Meeting Item Status:\nMeeting: " +meeting_id+", "+item_id
         output.insert(END, OutputString)
 #Validates inputs then updates Meeting Item Status if valid
 
@@ -218,7 +218,8 @@ def RaiseViewMeetingFrame(meeting):
 ###Update MIS Frame###
 def RaiseUpdateMISFrame(meeting_id, item_id):
     ClearFrame()
-    Label(RootFrame, text=item_id).grid(row=0, column=0, sticky=N)
+    CurrentMIS = "Meeting "+meeting_id+": "+item_id
+    Label(RootFrame, text=CurrentMIS).grid(row=0, column=0, sticky=N)
     Meeting = DatabaseManager.FetchMeeting(meeting_id)
     Output = Text(RootFrame, width=30, height=2, bg="light gray")
     Output.grid(row=1, column=0, sticky=N)
