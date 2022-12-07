@@ -157,10 +157,11 @@ def RaiseCreateMeetingFrame():
     Output = Text(RootFrame, width=30, height=3, bg="light gray")
     Output.grid(row=11, column=0, sticky=N)
 #Creates display
+    Label(RootFrame, text="Previous Meeting Items:").grid(row=12, column=0, sticky=N)
     MeetItemListbox = Listbox(RootFrame, selectmode = "multiple", width=30, height=5)
-    MeetItemListbox.grid(row=12, column=0, sticky=N)
+    MeetItemListbox.grid(row=13, column=0, sticky=N)
 #Creates Listbox for previous meeting items
-    Button(RootFrame, text="Get Previous Meeting Items", width=30, command=lambda:DisplayPrevMeet(MeetingTypeMenu.get(), Output, MeetItemListbox)).grid(row=13, column=0, sticky=N)
+    Button(RootFrame, text="Get Previous Meeting Items", width=30, command=lambda:DisplayPrevMeet(MeetingTypeMenu.get(), Output, MeetItemListbox)).grid(row=14, column=0, sticky=N)
 #Fetches and displays last meeting of chosen type
     Button(RootFrame, text="Create Meeting", width=30, command=lambda:CreateMeet(MeetingTypeMenu.get(), DateEntry.get(), TimeEntry.get(), Output, MeetItemListbox)).grid(row=20, column=0, sticky=N)
     Button(RootFrame, text="Back", width=30, command=lambda:RaiseRootFrame()).grid(row=99, column=0, sticky=N)
