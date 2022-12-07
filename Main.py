@@ -52,14 +52,11 @@ def GenerateMeetingListbox(menu, listbox):
     
 def DisplayMeet(meeting, output):
     output.delete(0.0, END)
-    MeetingItems = DatabaseManager.FetchMeetingItems(meeting[0])
-    MeetingItemString = ", ".join(MeetingItems)
     meeting_display = (
     "Meeting ID: " + meeting[0] + "\n" +
     "Meeting Type: " + meeting[1] + "\n" +
     "Date: " + meeting[2] + "\n" +
-    "Time: " + meeting[3] + "\n" +
-    "Items: " + MeetingItemString
+    "Time: " + meeting[3]
     )
     output.insert(END, meeting_display)
 #Formats and displays chosen meeting to chosen output
@@ -104,13 +101,21 @@ def ViewSelectedMeet(listbox):
             RaiseViewMeetingFrame(Meeting)
 #Views meeting selected in chosen listbox
 
+def UpdateSelectedItem(meeting_id, listbox):
+    CurSelection = listbox.curselection()
+    if CurSelection == ():
+        return None
+    else:
+        Item = listbox.get(CurSelection)
+        RaiseUpdateMISFrame(meeting_id, Item)
+    
+#Raises frame for updating selected Item
+
 def UpdateMISButton(meeting_id, item_id, action, status, DDate, CDate, Person, output):
     output.delete(0.0, END)
     ValidDD = ValidateLib.ValidateDate(DDate)
     ValidCD = ValidateLib.ValidateDate(CDate)
-    if item_id == "-item-":
-        output.insert(END, "Please select item")
-    elif ValidDD is None:
+    if ValidDD is None:
         output.insert(END, "Please input valid due date\n")
         output.insert(END, "yyyy-mm-dd")
     elif ValidCD is None:
@@ -188,30 +193,35 @@ def RaiseSelectMeetingFrame():
 def RaiseViewMeetingFrame(meeting):
     ClearFrame()
     Label(RootFrame, text="Current Meeting").grid(row=0, column=0, sticky=N)
-    CurrentMeetDataOutput = Text(RootFrame, width=30, height=5, bg="light gray")
+    CurrentMeetDataOutput = Text(RootFrame, width=30, height=3, bg="light gray")
     CurrentMeetDataOutput.grid(row=2, column=0, sticky=N)
     DisplayMeet(meeting, CurrentMeetDataOutput)
 #Displays Meeting
+    Label(RootFrame, text="Select Item:").grid(row=3, column=0, sticky=N)
+    ItemListbox = Listbox(RootFrame, selectmode = "single", width=30, height=5)
+    ItemListbox.grid(row=4, column=0, sticky=N)
+#Creates Listbox
+    ItemList = DatabaseManager.FetchMeetingItems(meeting[0])
+    for Item in ItemList:
+        ItemListbox.insert(END, Item)
+#Fetches items to be options in listbox
     Button(RootFrame, text="Print Meeting Minutes", width=30, command=lambda:RaisePrintMeetingFrame()).grid(row=10, column=0, sticky=N)
     Button(RootFrame, text="Add Meeting Item", width=30, command=lambda:RaiseAddItemFrame()).grid(row=11, column=0, sticky=N)
     Button(RootFrame, text="Edit Meeting Item", width=30, command=lambda:RaiseEditItemFrame()).grid(row=12, column=0, sticky=N)
-    Button(RootFrame, text="Update Meeting Item Status", width=30, command=lambda:RaiseUpdateMISFrame(meeting[0])).grid(row=13, column=0, sticky=N)
+    Button(RootFrame, text="Update Meeting Item Status", width=30, command=lambda:UpdateSelectedItem(meeting[0], ItemListbox)).grid(row=13, column=0, sticky=N)
     Button(RootFrame, text="View Meeting Item History", width=30, command=lambda:RaiseViewItemHistoryFrame()).grid(row=14, column=0, sticky=N)
     Button(RootFrame, text="Back", width=30, command=lambda:RaiseRootFrame()).grid(row=99, column=0, sticky=N)
 #Creates Buttons
 
+###SelectItemFrame###
+
 ###Update MIS Frame###
-def RaiseUpdateMISFrame(meeting_id):
+def RaiseUpdateMISFrame(meeting_id, item_id):
     ClearFrame()
+    Label(RootFrame, text=item_id).grid(row=0, column=0, sticky=N)
     Meeting = DatabaseManager.FetchMeeting(meeting_id)
-    MeetingItemList = DatabaseManager.FetchMeetingItems(meeting_id)
-    Label(RootFrame, text = "Choose Item:").grid(row=0, column=0, sticky=N)
-    ItemSelectMenu = StringVar()
-    ItemSelectMenu.set("-item-")
-    OptionMenu(RootFrame, ItemSelectMenu, *MeetingItemList).grid(row=1, column=0, sticky=N)
-#Creates Option Menu from Item List
     Output = Text(RootFrame, width=30, height=2, bg="light gray")
-    Output.grid(row=2, column=0, sticky=N)
+    Output.grid(row=1, column=0, sticky=N)
 #Creates display
     Label(RootFrame, text="Input Action:").grid(row=10, column=0, sticky=N)
     UpdAction = Entry(RootFrame, width=30, bg="light blue")
@@ -233,7 +243,7 @@ def RaiseUpdateMISFrame(meeting_id):
     UpdPR = Entry(RootFrame, width=30, bg="light blue")
     UpdPR.grid(row=19, column=0, sticky=N)
 #Update Person Responsible Input
-    Button(RootFrame, text="Update", command=lambda:UpdateMISButton(meeting_id, ItemSelectMenu.get(), UpdAction.get(), UpdStatus.get(), UpdDD.get(), UpdCD.get(), UpdPR.get(), Output)).grid(row=30, column=0, sticky=N)
+    Button(RootFrame, text="Update", command=lambda:UpdateMISButton(meeting_id, item_id, UpdAction.get(), UpdStatus.get(), UpdDD.get(), UpdCD.get(), UpdPR.get(), Output)).grid(row=30, column=0, sticky=N)
     Button(RootFrame, text="Back", command=lambda:RaiseViewMeetingFrame(Meeting)).grid(row=31, column=0, sticky=N)
 #Creates Buttons
 
