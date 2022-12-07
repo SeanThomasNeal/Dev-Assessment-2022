@@ -244,7 +244,7 @@ def RaiseUpdateMISFrame(meeting_id, item_id):
     UpdPR = Entry(RootFrame, width=30, bg="light blue")
     UpdPR.grid(row=19, column=0, sticky=N)
 #Update Person Responsible Input
-    Button(RootFrame, text="Update", command=lambda:UpdateMISButton(meeting_id, item_id, UpdAction.get(), UpdStatus.get(), UpdDD.get(), UpdCD.get(), UpdPR.get(), Output)).grid(row=30, column=0, sticky=N)
+    Button(RootFrame, text="Save", command=lambda:UpdateMISButton(meeting_id, item_id, UpdAction.get(), UpdStatus.get(), UpdDD.get(), UpdCD.get(), UpdPR.get(), Output)).grid(row=30, column=0, sticky=N)
     Button(RootFrame, text="Back", command=lambda:RaiseViewMeetingFrame(Meeting)).grid(row=31, column=0, sticky=N)
 #Creates Buttons
 
