@@ -28,9 +28,13 @@ def DisplayPrevMeet(meeting_type, output, listbox):
         if LastMeeting == []:
             output.insert(END, "No previous items to fetch"+"\n"+"Click Create Meeting to make\nempty meeting")
         else:
-            output.insert(END, "Meeting: "+LastMeeting[0]+"\n"+"Select items to carry forward:")
-            MeetingItems = StringManager.CreateMeetingItemList(LastMeeting)
+            LastMeetingID = LastMeeting[0]
+            print(len(LastMeetingID))
+            output.insert(END, "Meeting: "+LastMeetingID+"\n"+"Select items to carry forward:")
+            MeetingItems = DatabaseManager.FetchMeetingItems(LastMeetingID)
+            print(MeetingItems)
             for Item in MeetingItems:
+                print(Item)
                 listbox.insert(END, Item)
 #Displays previous meeting of specific type and creates listbox of items
 
@@ -51,12 +55,14 @@ def GenerateMeetingListbox(menu, listbox):
     
 def DisplayMeet(meeting, output):
     output.delete(0.0, END)
+    MeetingItems = DatabaseManager.FetchMeetingItems(meeting[0])
+    MeetingItemString = ", ".join(MeetingItems)
     meeting_display = (
     "Meeting ID: " + meeting[0] + "\n" +
     "Meeting Type: " + meeting[1] + "\n" +
     "Date: " + meeting[2] + "\n" +
     "Time: " + meeting[3] + "\n" +
-    "Items: " + meeting[4] + "\n"
+    "Items: " + MeetingItemString
     )
     output.insert(END, meeting_display)
 #Formats and displays chosen meeting to chosen output
@@ -77,12 +83,11 @@ def CreateMeet(meeting_type, date, time, output, listbox):
         ItemList = []
         for i in listbox.curselection():
             ItemList.append(listbox.get(i))
-        ItemListString = StringManager.CreateItemListString(ItemList)
         MeetingID = DatabaseManager.GenerateNewMeetingID(meeting_type)
         for Item in ItemList:
             MeetingItemStatus = StringManager.CreateMeetingItemStatus(MeetingID, Item)
             DatabaseManager.InsertData("Meeting Item Status", MeetingItemStatus)
-        MeetingData = StringManager.CreateMeetingData(MeetingID, meeting_type, date, time, ItemListString)
+        MeetingData = StringManager.CreateMeetingData(MeetingID, meeting_type, date, time)
         DatabaseManager.InsertData("Meeting", MeetingData)
 #Creates and inserts meeting into database from input data.
         Meeting = DatabaseManager.FetchMeeting(MeetingID)
@@ -200,8 +205,7 @@ def RaiseViewMeetingFrame(meeting):
 ###Update MIS Frame###
 def RaiseUpdateMISFrame(meeting_id):
     ClearFrame()
-    Meeting = DatabaseManager.FetchMeeting(meeting_id)
-    MeetingItemList = StringManager.CreateMeetingItemList(Meeting)
+    MeetingItemList = DatabaseManager.FetchMeetingItems(meeting_id)
     Label(RootFrame, text = "Choose Item:").grid(row=0, column=0, sticky=N)
     ItemSelectMenu = StringVar()
     ItemSelectMenu.set("-item-")

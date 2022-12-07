@@ -13,7 +13,7 @@ def CursorDecorator(func):
 
 @CursorDecorator
 def CreateTables(MainCursor):
-    MainCursor.execute("CREATE TABLE IF NOT EXISTS 'Meeting' (MeetingID TEXT, MeetingType TEXT, Date TEXT, Time TEXT, MeetingItemID TEXT)")
+    MainCursor.execute("CREATE TABLE IF NOT EXISTS 'Meeting' (MeetingID TEXT, MeetingType TEXT, Date TEXT, Time TEXT)")
     MainCursor.execute("CREATE TABLE IF NOT EXISTS 'Meeting Item' (MeetingItemID TEXT, ItemName TEXT, ItemDescription TEXT)")
     MainCursor.execute("CREATE TABLE IF NOT EXISTS 'Meeting Item Status' (MeetingID TEXT, MeetingItemID TEXT, Action TEXT, Status TEXT, DueDate TEXT, DateCompleted TEXT, PersonResponsible TEXT)")
 #Creates tables if they dont exist
@@ -83,6 +83,17 @@ def FetchLastMeeting(MainCursor, meeting_type):
         LastMeeting = Meetings[-1]
         return LastMeeting
 #Fetches last meeting of specific type
+
+@CursorDecorator
+def FetchMeetingItems(MainCursor, meeting_id):
+    List = []
+    LastMeetingItems = MainCursor.execute(
+        "SELECT MeetingItemID FROM 'Meeting Item Status' WHERE MeetingID = ?",
+        (meeting_id,)
+    ).fetchall()
+    for Item in LastMeetingItems:
+        List.append(Item[0])
+    return List
 
 @CursorDecorator
 def GenerateNewMeetingID(MainCursor, meeting_type):
