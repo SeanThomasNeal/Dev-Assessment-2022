@@ -29,12 +29,9 @@ def DisplayPrevMeet(meeting_type, output, listbox):
             output.insert(END, "No previous items to fetch"+"\n"+"Click Create Meeting to make\nempty meeting")
         else:
             LastMeetingID = LastMeeting[0]
-            print(len(LastMeetingID))
             output.insert(END, "Meeting: "+LastMeetingID+"\n"+"Select items to carry forward:")
             MeetingItems = DatabaseManager.FetchMeetingItems(LastMeetingID)
-            print(MeetingItems)
             for Item in MeetingItems:
-                print(Item)
                 listbox.insert(END, Item)
 #Displays previous meeting of specific type and creates listbox of items
 
